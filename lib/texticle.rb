@@ -102,11 +102,11 @@ module Texticle
   end
 
   def basic_similarity_string(table_name, column, search_term)
-    "ts_rank(to_tsvector(#{quoted_language}, #{table_name}.#{column}::text), plainto_tsquery(#{quoted_language}, #{search_term}::text))"
+    "ts_rank(to_tsvector(#{quoted_language(column)}, #{table_name}.#{column}::text), plainto_tsquery(#{quoted_language(column)}, #{search_term}::text))"
   end
 
   def basic_condition_string(table_name, column, search_term)
-    "to_tsvector(#{quoted_language}, #{table_name}.#{column}::text) @@ plainto_tsquery(#{quoted_language}, #{search_term}::text)"
+    "to_tsvector(#{quoted_language(column)}, #{table_name}.#{column}::text) @@ plainto_tsquery(#{quoted_language(column)}, #{search_term}::text)"
   end
 
   def advanced_similarities_and_conditions(parsed_query_hash)
@@ -119,11 +119,11 @@ module Texticle
   end
 
   def advanced_similarity_string(table_name, column, search_term)
-    "ts_rank(to_tsvector(#{quoted_language}, #{table_name}.#{column}::text), to_tsquery(#{quoted_language}, #{search_term}::text))"
+    "ts_rank(to_tsvector(#{quoted_language(column)}, #{table_name}.#{column}::text), to_tsquery(#{quoted_language(column)}, #{search_term}::text))"
   end
 
   def advanced_condition_string(table_name, column, search_term)
-    "to_tsvector(#{quoted_language}, #{table_name}.#{column}::text) @@ to_tsquery(#{quoted_language}, #{search_term}::text)"
+    "to_tsvector(#{quoted_language(column)}, #{table_name}.#{column}::text) @@ to_tsquery(#{quoted_language(column)}, #{search_term}::text)"
   end
 
   def fuzzy_similarities_and_conditions(parsed_query_hash)
@@ -159,11 +159,11 @@ module Texticle
     columns.select {|column| [:string, :text].include? column.type }.map(&:name)
   end
 
-  def quoted_language
-    @quoted_language ||= connection.quote(searchable_language)
+  def quoted_language(column = nil)
+    (@quoted_languages ||= {})[column] ||= connection.quote(searchable_language(column))
   end
 
-  def searchable_language
+  def searchable_language(search_term = nil)
     Texticle.searchable_language
   end
 
