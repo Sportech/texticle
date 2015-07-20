@@ -137,6 +137,8 @@ namespace :db do
         table.string :description
         table.integer :web_comic_id
       end
+
+      execute 'CREATE EXTENSION IF NOT EXISTS pg_trgm;'
     end
   end
 
