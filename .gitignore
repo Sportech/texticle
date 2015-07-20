@@ -5,3 +5,7 @@ pkg
 *~
 *.rbc
 Gemfile.lock
+
+vendor
+.bundle
+.idea
