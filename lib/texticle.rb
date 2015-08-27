@@ -119,11 +119,11 @@ module Texticle
   end
 
   def advanced_similarity_string(table_name, column, search_term)
-    "ts_rank(to_tsvector(#{quoted_language(column)}, #{table_name}.#{column}::text), to_tsquery(#{quoted_language(column)}, #{search_term}::text))"
+    "ts_rank(to_tsvector(#{quoted_language(column)}, #{table_name}.#{column}::text), to_tsquery(#{quoted_language(column)}, #{connection.quote(search_term)}::text))"
   end
 
   def advanced_condition_string(table_name, column, search_term)
-    "to_tsvector(#{quoted_language(column)}, #{table_name}.#{column}::text) @@ to_tsquery(#{quoted_language(column)}, #{search_term}::text)"
+    "to_tsvector(#{quoted_language(column)}, #{table_name}.#{column}::text) @@ to_tsquery(#{quoted_language(column)}, #{connection.quote(search_term)}::text)"
   end
 
   def fuzzy_similarities_and_conditions(parsed_query_hash)
